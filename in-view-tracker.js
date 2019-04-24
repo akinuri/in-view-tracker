@@ -94,6 +94,16 @@ function ViewTracker(el, callbacks, throttleDelay) {
             }
             self._prevVisibility = self.visibility;
         }, throttleDelay || 200));
+        window.addEventListener("resize", throttle(function () {
+            self.trackVisibility(el);
+            // if (self.events.callbacks.enter) {
+                // self.events.handlers.enter();
+            // }
+            // if (self.events.callbacks.exit) {
+                // self.events.handlers.exit();
+            // }
+            self._prevVisibility = self.visibility;
+        }, throttleDelay * 2 || 500));
     }
     
 }
