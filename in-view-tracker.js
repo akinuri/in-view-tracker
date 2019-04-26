@@ -73,18 +73,18 @@ function ViewTracker(el, callbacks, throttleDelay) {
                 if (self._prevVisibility == null) {
                     if (self.visibility.visible == "whole") {
                         self.stateStack.push("enter");
-                        self.events.callbacks.enter();
+                        self.events.callbacks.enter.call(self);
                     }
                 } else {
                     if (self._prevVisibility.visible != "whole" && self.visibility.visible == "whole") {
                         if (self.stateStack.includes("enter")) {
                             self.stateStack.push("reenter");
                             if (self.events.callbacks.reenter) {
-                                self.events.callbacks.reenter();
+                                self.events.callbacks.reenter.call(self);
                             }
                         } else {
                             self.stateStack.push("enter");
-                            self.events.callbacks.enter();
+                            self.events.callbacks.enter.call(self);
                         }
                     }
                 }
@@ -92,7 +92,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
             left : function () {
                 if (self._prevVisibility && self._prevVisibility.visible != "none" && self.visibility.visible == "none") {
                     self.stateStack.push("left");
-                    self.events.callbacks.left();
+                    self.events.callbacks.left.call(self);
                     self.stateStack = [];
                 }
             },
@@ -100,18 +100,18 @@ function ViewTracker(el, callbacks, throttleDelay) {
                 if (self._prevVisibility == null) {
                     if (["top", "bottom"].includes(self.visibility.visible)) {
                         self.stateStack.push("peek");
-                        self.events.callbacks.peek();
+                        self.events.callbacks.peek.call(self);
                     }
                 } else {
                     if (["top", "bottom"].includes(self.visibility.visible) && !["top", "bottom"].includes(self._prevVisibility.visible)) {
                         if (self.stateStack.includes("peek") || self.stateStack.includes("enter")) {
                             self.stateStack.push("leave");
                             if (self.events.callbacks.leave) {
-                                self.events.callbacks.leave();
+                                self.events.callbacks.leave.call(self);
                             }
                         } else {
                             self.stateStack.push("peek");
-                            self.events.callbacks.peek();
+                            self.events.callbacks.peek.call(self);
                         }
                     }
                 }
@@ -125,7 +125,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
             if (self.events.callbacks.enter || self.events.callbacks.reenter) {
                 self.events.handlers.enter();
             }
-            if (self.events.callbacks.peek) {
+            if (self.events.callbacks.peek || self.events.callbacks.leave) {
                 self.events.handlers.peek();
             }
             if (self.events.callbacks.left) {
@@ -147,6 +147,3 @@ ViewTracker.prototype.trackVisibility = function trackVisibility(el) {
     this.viewport = iv.viewport;
     this.visibility = iv.visibility;
 };
-
-
-
