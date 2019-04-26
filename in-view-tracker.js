@@ -1,6 +1,7 @@
 function inView(el) {
     var elemRect = el.getBoundingClientRect();
-    var element = {
+    var target = {
+        element : el,
         height  : elemRect.height,
         top     : elemRect.top + scrollY,
         bottom  : elemRect.top + scrollY + elemRect.height,
@@ -13,27 +14,27 @@ function inView(el) {
     var visibility = {
         visible : "none",
         amount  : 0,
-        overflow : element.height > viewport.height ? true : false,
+        overflow : target.height > viewport.height ? true : false,
     };
-    if (viewport.top < element.top && element.top < viewport.bottom) {
-        if (element.bottom < viewport.bottom) {
+    if (viewport.top < target.top && target.top < viewport.bottom) {
+        if (target.bottom < viewport.bottom) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
             visibility.visible = "top";
-            visibility.amount = parseFloat( ((viewport.bottom - element.top) / element.height).toFixed(2) );
+            visibility.amount = parseFloat( ((viewport.bottom - target.top) / target.height).toFixed(2) );
         }
     }
-    else if (viewport.top < element.bottom && element.bottom < viewport.bottom) {
-        if (element.top > viewport.top) {
+    else if (viewport.top < target.bottom && target.bottom < viewport.bottom) {
+        if (target.top > viewport.top) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
             visibility.visible = "bottom";
-            visibility.amount = parseFloat( ((element.bottom - viewport.top) / element.height).toFixed(2) );
+            visibility.amount = parseFloat( ((target.bottom - viewport.top) / target.height).toFixed(2) );
         }
     }
-    return {element, viewport, visibility};
+    return {target, viewport, visibility};
 }
 
 
@@ -142,7 +143,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
 
 ViewTracker.prototype.trackVisibility = function trackVisibility(el) {
     var iv = inView(el);
-    this.element = iv.element;
+    this.target = iv.target;
     this.viewport = iv.viewport;
     this.visibility = iv.visibility;
 };
